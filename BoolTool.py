@@ -114,15 +114,20 @@ def Operation(context,_operation):
             actObj["BoolToolRoot"] = True
             selObj["BoolToolBrush"] = _operation
             selObj["BoolTool_FTransform"] = "False"
-
+a = 0
 # Do Direct Union, Difference and Intersection Operations
 def Operation_Direct(context,_operation):
-    actObj = context.active_object
+    global a
+    if a == 0:
+        a = context.active_object
+    print(a)
+    context.scene.objects.active = a
+    actObj = a
     for selObj in bpy.context.selected_objects:
-        if selObj != context.active_object and(selObj.type == "MESH" or selObj.type == "CURVE"):
+        if selObj != a and(selObj.type == "MESH" or selObj.type == "CURVE"):
             if selObj.type == "CURVE":
                 ConvertToMesh(selObj)  
-            actObj = context.active_object
+            actObj = a
             
             newMod = actObj.modifiers.new("BTool_"+ selObj.name,"BOOLEAN")
             newMod.operation = _operation
@@ -1076,4 +1081,5 @@ def unregister():
 
 if __name__ == "__main__":
     register()
+
 
