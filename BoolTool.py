@@ -92,12 +92,19 @@ def ConvertToMesh(obj):
 
     
 # Do the Union, Difference and Intersection Operations with a Brush
+canvasObj = 0
+
 def Operation(context,_operation):
+    global canvasObj
+    if canvasObj == 0:
+        canvasObj = context.active_object
+    context.scene.objects.active = canvasObj
+    actObj = canvasObj
     for selObj in bpy.context.selected_objects:
-        if selObj != context.active_object and (selObj.type == "MESH" or selObj.type == "CURVE"):
+        if selObj != canvasObj and (selObj.type == "MESH" or selObj.type == "CURVE"):
             if selObj.type == "CURVE":
                 ConvertToMesh(selObj)  
-            actObj = context.active_object
+            actObj = canvasObj
             
             cyclesVis = selObj.cycles_visibility
             for obj in bpy.context.scene.objects:
@@ -114,20 +121,19 @@ def Operation(context,_operation):
             actObj["BoolToolRoot"] = True
             selObj["BoolToolBrush"] = _operation
             selObj["BoolTool_FTransform"] = "False"
-a = 0
+            
 # Do Direct Union, Difference and Intersection Operations
 def Operation_Direct(context,_operation):
-    global a
-    if a == 0:
-        a = context.active_object
-    print(a)
-    context.scene.objects.active = a
-    actObj = a
+    global canvasObj
+    if canvasObj == 0:
+        canvasObj = context.active_object
+    context.scene.objects.active = canvasObj
+    actObj = canvasObj
     for selObj in bpy.context.selected_objects:
-        if selObj != a and(selObj.type == "MESH" or selObj.type == "CURVE"):
+        if selObj != canvasObj and(selObj.type == "MESH" or selObj.type == "CURVE"):
             if selObj.type == "CURVE":
                 ConvertToMesh(selObj)  
-            actObj = a
+            actObj = canvasObj
             
             newMod = actObj.modifiers.new("BTool_"+ selObj.name,"BOOLEAN")
             newMod.operation = _operation
